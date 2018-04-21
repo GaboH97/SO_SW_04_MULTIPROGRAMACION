@@ -55,8 +55,6 @@ public class Process {
     public void setProcessSize(double processSize) {
         this.processSize = processSize;
     }
-    
-    
 
     public Partition getBelongingPartition() {
         return belongingPartition;
@@ -64,9 +62,7 @@ public class Process {
 
     public void setBelongingPartition(Partition belongingPartition) {
         this.belongingPartition = belongingPartition;
-    }
-    
-    
+    }  
 
     // ------------------------ To String --------------------------------
     @Override

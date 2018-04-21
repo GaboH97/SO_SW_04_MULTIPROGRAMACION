@@ -15,8 +15,21 @@ public class Partition {
     private double partitionSize;
     private ArrayList<Process> processes;
 
+    //--------------------- Constructors ------------------------
     
+    /**
+     * 
+     * @param partitionName
+     * @param partitionSize 
+     */
+    public Partition(String partitionName, double partitionSize) {
+        this.partitionName = partitionName;
+        this.partitionSize = partitionSize;
+        this.processes = new ArrayList<>();
+    }
+
     //------------------ Getters & Setters --------------------------
+    
     public String getPartitionName() {
         return partitionName;
     }
@@ -40,6 +53,9 @@ public class Partition {
     public void setProcesses(ArrayList<Process> processes) {
         this.processes = processes;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return this.getPartitionName();
+    }
 }

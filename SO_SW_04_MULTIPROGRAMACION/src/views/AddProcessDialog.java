@@ -22,6 +22,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
     //--------------------- Constructores ----------------
     public AddProcessDialog(java.awt.Frame parent, boolean modal, Controller controller) {
         super(parent, modal);
+        partitionComboBoxModel = new DefaultComboBoxModel<>();
         setUndecorated(true);
         initComponents();
         //Define los comando de la acción y el escucha de acciones
@@ -50,7 +51,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
         Process process = null;
         String timeInput = executionTimejtf.getText();
         //Verifica que los campos no estén vacíos
-        if (!processNamejtf.getText().isEmpty() && !timeInput.isEmpty()) {
+        if (!processNamejtf.getText().isEmpty() && !timeInput.isEmpty() && partitionjcb.getSelectedItem() != null) {
             //Verifica que la entrada del tiempo de ejecución sea válida
             if (isNumeric(executionTimejtf.getText())) {
                 //Hace una llamada del método estático de la lógica para crear
@@ -76,12 +77,12 @@ public class AddProcessDialog extends javax.swing.JDialog {
     public boolean isNumeric(String str) {
         return str != null && (str.matches("[+]?\\d*(\\.\\d+)?") && str.equals("") == false);
     }
-    
+
     /**
-     * 
-     * @param partitions 
+     *
+     * @param partitions
      */
-    public void addPartitions(ArrayList<Partition> partitions){
+    public void addPartitions(ArrayList<Partition> partitions) {
         partitionComboBoxModel.removeAllElements();
         for (Partition partition : partitions) {
             partitionComboBoxModel.addElement(partition);
@@ -205,6 +206,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
      */
     private void cancelbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelbtnActionPerformed
         clearFields();
+        setVisible(false);
         setVisible(false);
     }//GEN-LAST:event_cancelbtnActionPerformed
 

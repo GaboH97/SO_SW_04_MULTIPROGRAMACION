@@ -3,7 +3,9 @@ package controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import logic.Partition;
 import logic.ProcessManager;
+import views.AddPartitionDialog;
 import views.AddProcessDialog;
 import views.GUIUtils;
 import static views.GUIUtils.APP_TITLE;
@@ -30,6 +32,11 @@ public class Controller implements ActionListener {
     private AddProcessDialog addProcessDialog;
 
     /**
+     *
+     */
+    private AddPartitionDialog addPartitionDialog;
+
+    /**
      * GUI principal
      */
     private MainWindow mainWindow;
@@ -42,13 +49,15 @@ public class Controller implements ActionListener {
         processManager = new ProcessManager();
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
+        addPartitionDialog = new AddPartitionDialog(mainWindow, true, this);
     }
 
     public Controller(ProcessManager processManager) {
         this.processManager = processManager;
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
-        showProcesses();
+        addPartitionDialog = new AddPartitionDialog(mainWindow, true, this);
+        showPartitionsAndProcesses();
     }
 
     //----------------------- Métodos -------------------------
@@ -66,10 +75,17 @@ public class Controller implements ActionListener {
         //del enumerado Actions
         switch (Actions.valueOf(e.getActionCommand())) {
             case OPEN_CREATE_PROCESS:
+                addProcessDialog.addPartitions(processManager.getPartitionsList());
                 addProcessDialog.setVisible(true);
                 break;
             case CREATE_PROCESS:
                 createProcess();
+                break;
+            case OPEN_CREATE_PARTITION:
+                addPartitionDialog.setVisible(true);
+                break;
+            case CREATE_PARTITION:
+                createPartition();
                 break;
             case START:
                 start();
@@ -87,7 +103,7 @@ public class Controller implements ActionListener {
                 openDefineQuantum();
                 break;
             case SHOW_PROCESSES:
-                showProcesses();
+                showPartitionsAndProcesses();
                 break;
         }
     }
@@ -124,14 +140,46 @@ public class Controller implements ActionListener {
     }
 
     /**
+     * Agrega un proceso
+     */
+    private void createPartition() {
+        //Crea una nuevo Proceso, si no es nulo, significa que ha sido creado
+        //Exitosamente, es decir
+        Partition partition = addPartitionDialog.createPartition();
+        if (partition != null) {
+            //Agrega el proceso en la lógica y si ha sido agregado correctamente,
+            //Lo agrega a la GUI y cierra el diálogo de agregar proceso
+            if (processManager.addPartition(partition)) {
+                mainWindow.addPartition(partition);
+                addPartitionDialog.close();
+            } else {
+                //Muestra un mensaje de error indicando que el proceso
+                //Ya existe en la lógica
+                JOptionPane.showMessageDialog(addPartitionDialog,
+                        GUIUtils.MSG_PROCESS_ALREADY_EXISTS,
+                        APP_TITLE,
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            //Muestra un mensaje de error indicando que en el diálogo para agregar
+            //Procesos hay campos vacíos
+            JOptionPane.showMessageDialog(addPartitionDialog,
+                    GUIUtils.MSG_EMPTY_FIELDS,
+                    APP_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
      * Comienza la ejecución de los procesos
      */
     private void start() {
         //Revisa que la lista no esté vacía, si no lo está, inicia la ejecución 
         //de los procesos, cambia la perspectiva de la GUI principal y muestra
         //los procesos E/S
-        if (!processManager.getInput_ProcessList().isEmpty()) {
+        if (!processManager.getPartitionsList().isEmpty()) {
             processManager.processProcesses();
+            System.out.println("aqui entra");
             mainWindow.showOptions(false);
             showIOProcesses();
         } else {
@@ -148,7 +196,7 @@ public class Controller implements ActionListener {
      * Muestra una tabla los procesos de entrada y de salida
      */
     private void showIOProcesses() {
-        mainWindow.showIOProcesses(processManager.getInput_ProcessList(), processManager.getOutput_ProcessList());
+        //mainWindow.showIOProcesses(processManager.getInput_ProcessList(), processManager.getOutput_ProcessList(), processManager.getUnprocessed_ProcessList());
     }
 
     /**
@@ -161,15 +209,15 @@ public class Controller implements ActionListener {
                 processManager.getLocked_ProcessList(),
                 processManager.getSuspendedReady_ProcessList(),
                 processManager.getLockedSuspended_ProcessList());
-        */
-        }
+         */
+    }
 
     /**
      * Muestra una tabla con las transiciones de los procesos (Expirados,
      * Despiertos)
      */
     private void showTransitions() {
-       /* mainWindow.showTransitions(processManager.getTrans_Expired_ExecutionToReady(),
+        /* mainWindow.showTransitions(processManager.getTrans_Expired_ExecutionToReady(),
                 processManager.getTrans_Dispatch_ReadyToExecution(),
                 processManager.getTrans_WaitES_ExecutionToLocked(),
                 processManager.getTrans_ESFinished_LockedToReady(),
@@ -205,8 +253,9 @@ public class Controller implements ActionListener {
         this.processManager = processManager;
     }
 
-    private void showProcesses() {
-        mainWindow.showProcesses(processManager.getInput_ProcessList());
+    private void showPartitionsAndProcesses() {
+     
+        mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
     }
 
 }
