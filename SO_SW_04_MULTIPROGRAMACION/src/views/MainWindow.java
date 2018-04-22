@@ -3,11 +3,18 @@ package views;
 import controller.Actions;
 import controller.Controller;
 import java.awt.Desktop;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import logic.Process;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
 import logic.Partition;
 import static views.GUIUtils.APP_TITLE;
@@ -20,7 +27,7 @@ import static views.GUIUtils.APP_TITLE;
  *
  * @author Gabriel Huertas y Cesar Cardozo
  */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame implements ActionListener {
 
     //---------------------- Attributes -------------------------------
     /**
@@ -28,6 +35,7 @@ public class MainWindow extends javax.swing.JFrame {
      */
     private DefaultTableModel processesTableModel;
     private DefaultTableModel partitionsTableModel;
+    private Controller controller;
 
     //---------------------- Constructores -------------------------
     /**
@@ -36,29 +44,30 @@ public class MainWindow extends javax.swing.JFrame {
      * @param controller referencia al controlador que manejará los eventos
      */
     public MainWindow(Controller controller) {
-
+        
+        this.controller = controller;
         processesTableModel = new DefaultTableModel(GUIUtils.ADD_PROCESSES_TABLE_HEADERS, 0) {
-
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-
+        
         partitionsTableModel = new DefaultTableModel(GUIUtils.ADD_PARTITIONS_TABLE_HEADERS, 0) {
-
+            
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-
+        
         this.setTitle(APP_TITLE);
         //this.setUndecorated(true);
         initComponents();
+        partitionsTable.setComponentPopupMenu(popupMenu);
         setActions(controller);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setActions(controller);
         showOptions(true);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -69,6 +78,9 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        popupMenu = new javax.swing.JPopupMenu();
+        editPartitionjmi = new javax.swing.JMenuItem();
+        deletePartitionjmi = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         createProcessbtn = new javax.swing.JButton();
@@ -93,6 +105,12 @@ public class MainWindow extends javax.swing.JFrame {
         defineQuantumjmi = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         checkManualjmi = new javax.swing.JMenuItem();
+
+        editPartitionjmi.setText("Editar");
+        popupMenu.add(editPartitionjmi);
+
+        deletePartitionjmi.setText("Eliminar");
+        popupMenu.add(deletePartitionjmi);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -309,7 +327,15 @@ public class MainWindow extends javax.swing.JFrame {
         startbtn.addActionListener(controller);
         defineQuantumjmi.setActionCommand(Actions.OPEN_DEFINE_QUANTUM.name());
         defineQuantumjmi.addActionListener(controller);
-
+        partitionsandProcessesbtn.setActionCommand(Actions.SHOW_PARTITIONS_AND_PROCESSES.name());
+        partitionsandProcessesbtn.addActionListener(controller);
+        IOProcessesbtn.setActionCommand(Actions.SHOW_IO_PROCESSES.name());
+        IOProcessesbtn.addActionListener(controller);
+        
+        editPartitionjmi.addActionListener(this);
+        deletePartitionjmi.addActionListener(this);
+        deletePartitionjmi.setActionCommand(Actions.DELETE_PARTITION.name());
+        
     }
 
     /**
@@ -348,7 +374,7 @@ public class MainWindow extends javax.swing.JFrame {
         //Agrega los datos del proceso en las columnas correspondientes
         partitionsTableModel.setValueAt(p.getPartitionName(), partitionsTableModel.getRowCount() - 1, 0);
         partitionsTableModel.setValueAt(p.getPartitionSize(), partitionsTableModel.getRowCount() - 1, 1);
-
+        
         this.repaint();
     }
 
@@ -387,6 +413,8 @@ public class MainWindow extends javax.swing.JFrame {
         createProcessbtn.setVisible(isInitial);
         createPartitionbtn.setVisible(isInitial);
         startbtn.setVisible(isInitial);
+        partitionsandProcessesbtn.setVisible(!isInitial);
+        IOProcessesbtn.setVisible(!isInitial);
     }
 
 
@@ -396,6 +424,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton createPartitionbtn;
     private javax.swing.JButton createProcessbtn;
     private javax.swing.JMenuItem defineQuantumjmi;
+    private javax.swing.JMenuItem deletePartitionjmi;
+    private javax.swing.JMenuItem editPartitionjmi;
     private javax.swing.JButton exitbtn;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -411,6 +441,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTable partitionsTable;
     private javax.swing.JPanel partitionsTablePanel;
     private javax.swing.JButton partitionsandProcessesbtn;
+    private javax.swing.JPopupMenu popupMenu;
     private javax.swing.JTable processesTable;
     private javax.swing.JButton startbtn;
     private javax.swing.JLabel tableHeaderPartitionslbl;
@@ -450,7 +481,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         this.revalidate();
     }
-
+    
     public void showStates(ArrayList<Process> readyProcessList, ArrayList<Process> executionProcessList, ArrayList<Process> lockedProcessList) {
         //Limpia la tabla, define los encabezados de la tabla y el título del panel
         clearTable();
@@ -498,6 +529,7 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public void showPartitionsandProcesses(ArrayList<Partition> partitionsList, ArrayList<Process> input_ProcessList) {
         clearTable();
+        tableHeaderPartitionslbl.setVisible(true);
         partitionsTableModel.getDataVector().removeAllElements();
         partitionsTablePanel.setVisible(true);
         tableHeaderlbl.setText(GUIUtils.ADD_PROCESSES_LABEL_HEADER);
@@ -510,5 +542,16 @@ public class MainWindow extends javax.swing.JFrame {
         }
         this.revalidate();
     }
-
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JMenuItem menu = (JMenuItem) e.getSource();
+        if (menu == editPartitionjmi) {
+            int column = 0;
+            int row = partitionsTable.getSelectedRow();
+            String value = partitionsTable.getModel().getValueAt(row, column).toString();
+            controller.editPartition(value);
+        }
+    }
+    
 }

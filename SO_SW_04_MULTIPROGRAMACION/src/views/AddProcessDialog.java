@@ -26,8 +26,8 @@ public class AddProcessDialog extends javax.swing.JDialog {
         setUndecorated(true);
         initComponents();
         //Define los comando de la acción y el escucha de acciones
-        createbtn.setActionCommand(Actions.CREATE_PROCESS.name());
-        createbtn.addActionListener(controller);
+        createProcessbtn.setActionCommand(Actions.CREATE_PROCESS.name());
+        createProcessbtn.addActionListener(controller);
         setLocationRelativeTo(null);
         setVisible(false);
     }
@@ -99,7 +99,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         processNamejtf = new javax.swing.JTextField();
         executionTimejtf = new javax.swing.JTextField();
-        createbtn = new javax.swing.JButton();
+        createProcessbtn = new javax.swing.JButton();
         cancelbtn = new javax.swing.JButton();
         partitionjcb = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -116,7 +116,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Tiempo de Ejecución");
 
-        createbtn.setText("Crear");
+        createProcessbtn.setText("Crear");
 
         cancelbtn.setText("Cancelar");
         cancelbtn.addActionListener(new java.awt.event.ActionListener() {
@@ -161,7 +161,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(95, 95, 95)
-                .addComponent(createbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(createProcessbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(cancelbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -191,7 +191,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(createbtn)
+                    .addComponent(createProcessbtn)
                     .addComponent(cancelbtn))
                 .addGap(27, 27, 27))
         );
@@ -220,7 +220,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelbtn;
-    private javax.swing.JButton createbtn;
+    private javax.swing.JButton createProcessbtn;
     private javax.swing.JTextField executionTimejtf;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

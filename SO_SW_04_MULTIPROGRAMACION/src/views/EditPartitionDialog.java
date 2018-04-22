@@ -15,12 +15,12 @@ import logic.ProcessManager;
  *
  * @author user
  */
-public class AddPartitionDialog extends javax.swing.JDialog {
+public class EditPartitionDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form AddPartitionDialog
      */
-    public AddPartitionDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+    public EditPartitionDialog(java.awt.Frame parent, boolean modal, Controller controller) {
         super(parent, modal);
         setUndecorated(true);
         initComponents();

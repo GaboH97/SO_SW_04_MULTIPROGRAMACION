@@ -27,6 +27,7 @@ public class GUIUtils {
     public static final String MSG_EMPTY_FIELDS = "Hay campos vacíos";
     public static final String MSG_PROCESS_ALREADY_EXISTS = "Este proceso ya existe";
     public static final String MSG_NO_PROCESS = "No hay procesos para ejecutar";
+    public static final String MSG_NO_PARTITIONS = "No hay al menos una partición ";
     public static final String MSG_INVALID_TIME = "Tiempo no válido";
 
 }

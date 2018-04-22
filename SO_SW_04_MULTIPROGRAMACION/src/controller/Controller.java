@@ -87,6 +87,9 @@ public class Controller implements ActionListener {
             case CREATE_PARTITION:
                 createPartition();
                 break;
+            case EDIT_PARTITION:
+
+                break;
             case START:
                 start();
                 break;
@@ -102,7 +105,7 @@ public class Controller implements ActionListener {
             case OPEN_DEFINE_QUANTUM:
                 openDefineQuantum();
                 break;
-            case SHOW_PROCESSES:
+            case SHOW_PARTITIONS_AND_PROCESSES:
                 showPartitionsAndProcesses();
                 break;
         }
@@ -177,26 +180,32 @@ public class Controller implements ActionListener {
         //Revisa que la lista no esté vacía, si no lo está, inicia la ejecución 
         //de los procesos, cambia la perspectiva de la GUI principal y muestra
         //los procesos E/S
-        if (!processManager.getPartitionsList().isEmpty()) {
-            processManager.processProcesses();
-            System.out.println("aqui entra");
-            mainWindow.showOptions(false);
-            showIOProcesses();
-        } else {
+        if (processManager.getPartitionsList().isEmpty()) {
+             //Muestra un mensaje de error indicando que no hay procesos para eje-
+            //cutarse
+            JOptionPane.showMessageDialog(mainWindow,
+                    GUIUtils.MSG_NO_PROCESS,
+                    APP_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
+        } else if (processManager.getInput_ProcessList().isEmpty()) {
             //Muestra un mensaje de error indicando que no hay procesos para eje-
             //cutarse
             JOptionPane.showMessageDialog(mainWindow,
                     GUIUtils.MSG_NO_PROCESS,
                     APP_TITLE,
                     JOptionPane.ERROR_MESSAGE);
+        } else {
+            processManager.processProcesses();
+            mainWindow.showOptions(false);
+            showIOProcesses();
         }
     }
 
     /**
-     * Muestra una tabla los procesos de entrada y de salida
+     * Muestra una tabla los procesos de entrada, salida y los no procesados
      */
     private void showIOProcesses() {
-        //mainWindow.showIOProcesses(processManager.getInput_ProcessList(), processManager.getOutput_ProcessList(), processManager.getUnprocessed_ProcessList());
+        mainWindow.showIOProcesses(processManager.getInput_ProcessList(), processManager.getOutput_ProcessList(), processManager.getUnprocessed_ProcessList());
     }
 
     /**
@@ -253,9 +262,20 @@ public class Controller implements ActionListener {
         this.processManager = processManager;
     }
 
+    /**
+     * Muestra las particiones y procesos creados
+     */
     private void showPartitionsAndProcesses() {
-     
         mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
+    }
+
+    public boolean editPartition(String partitionName) {
+        try {
+            Partition partition = processManager.searchPartition(partitionName);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
 }

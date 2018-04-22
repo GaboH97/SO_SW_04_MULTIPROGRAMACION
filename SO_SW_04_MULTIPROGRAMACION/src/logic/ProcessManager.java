@@ -1,6 +1,8 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Clase que representa el manejador de procesos. Se encarga de crear, agregar y
@@ -29,6 +31,7 @@ public class ProcessManager {
         this.input_ProcessList = new ArrayList<>();
         this.ready_ProcessList = new ArrayList<>();
         this.execution_ProcessList = new ArrayList<>();
+        this.output_ProcessList = new ArrayList<>();
         this.partitionsList = new ArrayList<>();
         this.unprocessed_ProcessList = new ArrayList<>();
     }
@@ -52,8 +55,15 @@ public class ProcessManager {
             searchProcess(p.getName(), input_ProcessList);
             return false;
         } catch (Exception e) {
-            input_ProcessList.add(p);
-            return true;
+            try {
+                Partition partition = searchPartition(p.getBelongingPartition().getPartitionName());
+                partition.getProcesses().add(p);
+                input_ProcessList.add(p);
+               
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
         }
     }
 
@@ -155,10 +165,9 @@ public class ProcessManager {
      * especifica- da
      *
      * @param name Nombre del proceso
-     * @param list Lista en la cual debe buscar el proceso
      * @return El proceso con el nombre especificado, null si no lo encontró
      */
-    private Partition searchPartition(String name) throws Exception {
+    public Partition searchPartition(String name) throws Exception {
         for (Partition partition : partitionsList) {
             if (partition.getPartitionName().equals(name)) {
                 return partition;
