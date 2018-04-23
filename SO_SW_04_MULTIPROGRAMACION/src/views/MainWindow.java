@@ -44,28 +44,29 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
      * @param controller referencia al controlador que manejará los eventos
      */
     public MainWindow(Controller controller) {
-        
+
         this.controller = controller;
         processesTableModel = new DefaultTableModel(GUIUtils.ADD_PROCESSES_TABLE_HEADERS, 0) {
-            
+
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        
+
         partitionsTableModel = new DefaultTableModel(GUIUtils.ADD_PARTITIONS_TABLE_HEADERS, 0) {
-            
+
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        
+
         this.setTitle(APP_TITLE);
         //this.setUndecorated(true);
         initComponents();
-        partitionsTable.setComponentPopupMenu(popupMenu);
+        partitionsTable.setComponentPopupMenu(partitionsPopupMenu);
+        processesTable.setComponentPopupMenu(processesPopupMenu);
         setActions(controller);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         showOptions(true);
@@ -78,9 +79,12 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        popupMenu = new javax.swing.JPopupMenu();
+        partitionsPopupMenu = new javax.swing.JPopupMenu();
         editPartitionjmi = new javax.swing.JMenuItem();
         deletePartitionjmi = new javax.swing.JMenuItem();
+        processesPopupMenu = new javax.swing.JPopupMenu();
+        editProcessjmi = new javax.swing.JMenuItem();
+        deleteProcessjmi = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         createProcessbtn = new javax.swing.JButton();
@@ -107,10 +111,18 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         checkManualjmi = new javax.swing.JMenuItem();
 
         editPartitionjmi.setText("Editar");
-        popupMenu.add(editPartitionjmi);
+        partitionsPopupMenu.add(editPartitionjmi);
 
         deletePartitionjmi.setText("Eliminar");
-        popupMenu.add(deletePartitionjmi);
+        partitionsPopupMenu.add(deletePartitionjmi);
+
+        editProcessjmi.setText("Editar"
+        );
+        processesPopupMenu.add(editProcessjmi);
+
+        deleteProcessjmi.setText("Eliminar"
+        );
+        processesPopupMenu.add(deleteProcessjmi);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -331,10 +343,12 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         partitionsandProcessesbtn.addActionListener(controller);
         IOProcessesbtn.setActionCommand(Actions.SHOW_IO_PROCESSES.name());
         IOProcessesbtn.addActionListener(controller);
-        
+
+        //---------------OPCIONES JPOPUPMENUS
         editPartitionjmi.addActionListener(this);
         deletePartitionjmi.addActionListener(this);
-        deletePartitionjmi.setActionCommand(Actions.DELETE_PARTITION.name());
+        editProcessjmi.addActionListener(this);
+        deleteProcessjmi.addActionListener(this);
         
     }
 
@@ -374,7 +388,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         //Agrega los datos del proceso en las columnas correspondientes
         partitionsTableModel.setValueAt(p.getPartitionName(), partitionsTableModel.getRowCount() - 1, 0);
         partitionsTableModel.setValueAt(p.getPartitionSize(), partitionsTableModel.getRowCount() - 1, 1);
-        
+
         this.repaint();
     }
 
@@ -425,7 +439,9 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JButton createProcessbtn;
     private javax.swing.JMenuItem defineQuantumjmi;
     private javax.swing.JMenuItem deletePartitionjmi;
+    private javax.swing.JMenuItem deleteProcessjmi;
     private javax.swing.JMenuItem editPartitionjmi;
+    private javax.swing.JMenuItem editProcessjmi;
     private javax.swing.JButton exitbtn;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -438,10 +454,11 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel menulbl;
+    private javax.swing.JPopupMenu partitionsPopupMenu;
     private javax.swing.JTable partitionsTable;
     private javax.swing.JPanel partitionsTablePanel;
     private javax.swing.JButton partitionsandProcessesbtn;
-    private javax.swing.JPopupMenu popupMenu;
+    private javax.swing.JPopupMenu processesPopupMenu;
     private javax.swing.JTable processesTable;
     private javax.swing.JButton startbtn;
     private javax.swing.JLabel tableHeaderPartitionslbl;
@@ -481,7 +498,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         }
         this.revalidate();
     }
-    
+
     public void showStates(ArrayList<Process> readyProcessList, ArrayList<Process> executionProcessList, ArrayList<Process> lockedProcessList) {
         //Limpia la tabla, define los encabezados de la tabla y el título del panel
         clearTable();
@@ -542,16 +559,26 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         }
         this.revalidate();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        JMenuItem menu = (JMenuItem) e.getSource();
-        if (menu == editPartitionjmi) {
-            int column = 0;
+        JMenuItem menuItem = (JMenuItem) e.getSource();
+        if (menuItem == editPartitionjmi) {
             int row = partitionsTable.getSelectedRow();
-            String value = partitionsTable.getModel().getValueAt(row, column).toString();
+            String value = partitionsTable.getModel().getValueAt(row, 0).toString();
             controller.editPartition(value);
+        } else if (menuItem == deletePartitionjmi) {
+            int row = partitionsTable.getSelectedRow();
+            String value = partitionsTable.getModel().getValueAt(row, 0).toString();
+            controller.deletePartition(value);
+        }else if(menuItem == editProcessjmi){
+            int row = processesTable.getSelectedRow();
+            String value = processesTable.getModel().getValueAt(row, 0).toString();
+            controller.editProcess(value);
+        }else if(menuItem== deleteProcessjmi){
+            int row = processesTable.getSelectedRow();
+            String value = processesTable.getModel().getValueAt(row, 0).toString();
+            controller.deleteProcess(value);
         }
     }
-    
 }

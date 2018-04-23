@@ -1,4 +1,4 @@
-package test;
+package run;
 
 import logic.ProcessManager;
 import controller.Controller;
@@ -18,6 +18,6 @@ public class Runner {
         pm.addPartition(new Partition("B", 30));
         pm.addPartition(new Partition("C", 10));
         pm.addPartition(new Partition("D", 5));
-        Controller controller = new Controller(pm);
+        Controller controller = Controller.getInstance(pm);
     }
 }

@@ -41,18 +41,45 @@ public class Controller implements ActionListener {
      */
     private MainWindow mainWindow;
 
+    /**
+     * Atributo privado para la creación de única instancia de clase
+     */
+    private static Controller controller;
+
     //-------------------- Constructores -------------------------
     /**
      * Crea una nueva instancia de la clase Controller
+     *
+     * @param processManager Manejador de Procesos
+     * @return instancia Singleton de la clase
      */
-    public Controller() {
+    public static Controller getInstance(ProcessManager processManager) {
+        if (controller == null) {
+            controller = new Controller(processManager);
+        }
+        return controller;
+    }
+
+    /**
+     * Crea una nueva instancia de la clase Controller
+     *
+     * @return instancia Singleton de la clase
+     */
+    public static Controller getInstance() {
+        if (controller == null) {
+            controller = new Controller();
+        }
+        return controller;
+    }
+
+    private Controller() {
         processManager = new ProcessManager();
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
         addPartitionDialog = new AddPartitionDialog(mainWindow, true, this);
     }
 
-    public Controller(ProcessManager processManager) {
+    private Controller(ProcessManager processManager) {
         this.processManager = processManager;
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
@@ -181,7 +208,7 @@ public class Controller implements ActionListener {
         //de los procesos, cambia la perspectiva de la GUI principal y muestra
         //los procesos E/S
         if (processManager.getPartitionsList().isEmpty()) {
-             //Muestra un mensaje de error indicando que no hay procesos para eje-
+            //Muestra un mensaje de error indicando que no hay procesos para eje-
             //cutarse
             JOptionPane.showMessageDialog(mainWindow,
                     GUIUtils.MSG_NO_PROCESS,
@@ -270,8 +297,52 @@ public class Controller implements ActionListener {
     }
 
     public boolean editPartition(String partitionName) {
+        System.out.println("Quiere editar la particion");
+        return true;
+    }
+
+    /**
+     * TOCA MIRAR SI EL BORRADO TAMBIÉN SE HACE EN CASCADA, ES DECIR QUE SI SE
+     * BORRA UNA PARTICIÓN, TAMBIÉN SE BORRAN SUS PROCESOS
+     *
+     * @param partitionName La partición a borrar
+     * @return true si la partición fue borrada, de lo contrario false
+     */
+    public boolean deletePartition(String partitionName) {
         try {
-            Partition partition = processManager.searchPartition(partitionName);
+            processManager.getPartitionsList().remove(processManager.searchPartition(partitionName));
+            mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param value
+     * @return
+     */
+    public boolean editProcess(String value) {
+        return true;
+    }
+
+    /**
+     *
+     * @param processName Nombre del proceso a borrar
+     * @return true si el proceso fue borrado, de lo contrario false
+     */
+    public boolean deleteProcess(String processName) {
+        try {
+            System.out.println("entra aqui");
+            //Obtiene el proceso y la partición a la que pertenece
+            logic.Process process = processManager.searchProcess(processName, processManager.getInput_ProcessList());
+            Partition partition = process.getBelongingPartition();
+            //Elimina el proceso de la partición y de la lista de entrada
+            processManager.searchPartition(partition.getPartitionName()).getProcesses().remove(process);
+            processManager.getInput_ProcessList().remove(processManager.searchProcess(processName,processManager.getInput_ProcessList()));
+            System.out.println(processManager.toString());
+            mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
             return true;
         } catch (Exception ex) {
             return false;

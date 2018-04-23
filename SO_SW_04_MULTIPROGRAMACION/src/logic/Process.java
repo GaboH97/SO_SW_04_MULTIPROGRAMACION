@@ -67,6 +67,6 @@ public class Process {
     // ------------------------ To String --------------------------------
     @Override
     public String toString() {
-        return "\n ***Process{" + "name=" + name + ", executionTime=" + executionTime + '}';
+        return "\n ***Process{" + "name=" + name + ", executionTime=" + executionTime + '}'+"\n";
     }
 }

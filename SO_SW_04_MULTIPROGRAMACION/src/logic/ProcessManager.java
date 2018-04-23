@@ -59,7 +59,7 @@ public class ProcessManager {
                 Partition partition = searchPartition(p.getBelongingPartition().getPartitionName());
                 partition.getProcesses().add(p);
                 input_ProcessList.add(p);
-               
+
                 return true;
             } catch (Exception ex) {
                 return false;
@@ -151,7 +151,7 @@ public class ProcessManager {
      * @param list Lista en la cual debe buscar el proceso
      * @return El proceso con el nombre especificado, null si no lo encontró
      */
-    private Process searchProcess(String name, ArrayList<Process> list) throws Exception {
+    public Process searchProcess(String name, ArrayList<Process> list) throws Exception {
         for (Process process : list) {
             if (process.getName().equals(name)) {
                 return process;
@@ -207,11 +207,15 @@ public class ProcessManager {
 
     @Override
     public String toString() {
-        return "ProcessManager{\n" + "\n input_ProcessList=" + input_ProcessList
+        String todo = "ProcessManager{\n" + "\n input_ProcessList=" + input_ProcessList
                 + "\n ready_ProcessList=" + ready_ProcessList
                 + "\n execution_ProcessList=" + execution_ProcessList
-                + "\n output_ProcessList=" + output_ProcessList;
-
+                + "\n output_ProcessList=" + output_ProcessList
+                + "\n partitions =\n";
+        for (Partition partition : partitionsList) {
+            todo += partition.customToString();
+        }
+        return todo;
     }
 
     public void setQuantum(double quantum) {

@@ -58,4 +58,10 @@ public class Partition {
     public String toString() {
         return this.getPartitionName();
     }
+    
+    public String customToString(){
+        return "Partition: "+getPartitionName()+System.getProperty("line.separator")
+                +"Size: "+getPartitionSize()+System.getProperty("line.separator")
+                +"Processes: "+getProcesses();
+    }
 }
