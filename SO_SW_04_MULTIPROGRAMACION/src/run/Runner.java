@@ -2,8 +2,6 @@ package run;
 
 import logic.ProcessManager;
 import controller.Controller;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logic.Partition;
 
 /**
@@ -42,7 +40,7 @@ public class Runner {
         pm.addProcess(pm.createProcess("p2c", 7, 10, pc));
         pm.addProcess(pm.createProcess("p3c", 3, 10, pc));
 
-        pm.processProcesses();
+//        pm.processProcesses();
 
         System.out.println(pm.toString());
         Controller controller = Controller.getInstance(pm);

@@ -98,7 +98,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         };
 
         this.setTitle(APP_TITLE);
-        //this.setUndecorated(true);
+        this.setUndecorated(true);
         initComponents();
 
         setActions(controller);
