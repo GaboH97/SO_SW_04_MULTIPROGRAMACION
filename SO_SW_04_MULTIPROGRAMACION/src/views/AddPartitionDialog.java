@@ -9,7 +9,10 @@ import controller.Actions;
 import controller.Controller;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import logic.Partition;
 import logic.ProcessManager;
 
@@ -45,20 +48,37 @@ public class AddPartitionDialog extends javax.swing.JDialog {
      *
      * @return Una instancia de la clase Proceso
      */
-    public Partition createPartition() throws Exception {
-        Partition partition = null;
-        //Verifica que los campos no estén vacíos
+    public Partition createPartition(ArrayList<Partition> partitions) throws Exception {
+        for (Partition partition : partitions) {
+            if (partition.getPartitionName().equals(partitionNamejtf.getText())) {
+                throw new Exception(GUIUtils.MSG_PARTITION_ALREADY_EXISTS);
+            }
+        }
         if (!partitionNamejtf.getText().isEmpty() && !partitionSizejtf.getText().isEmpty()) {
             //Verifica que la entrada del tiempo de ejecución sea válida
-            if (isNumeric(partitionSizejtf.getText())) {
-                //Hace una llamada del método estático de la lógica para crear
-                //una nueva instancia de la clase Proceso
-                partition = ProcessManager.createPartition(partitionNamejtf.getText(), Double.parseDouble(partitionSizejtf.getText()));
+           if (isNumeric(partitionSizejtf.getText())) {
+//                Hace una llamada del método estático de la lógica para crear
+//                una nueva instancia de la clase Proceso
+                return  ProcessManager.createPartition(partitionNamejtf.getText(), Double.parseDouble(partitionSizejtf.getText()));
             } else {
                throw new Exception(GUIUtils.MSG_INVALID_TIME);
             }
         }
-        return partition;
+        return null;        
+    }
+    
+    public Partition editPArtition(ArrayList<Partition> partitions) throws Exception {
+        if (!partitionNamejtf.getText().isEmpty() && !partitionSizejtf.getText().isEmpty()) {
+            //Verifica que la entrada del tiempo de ejecución sea válida
+           if (isNumeric(partitionSizejtf.getText())) {
+//                Hace una llamada del método estático de la lógica para crear
+//                una nueva instancia de la clase Proceso
+                return  ProcessManager.createPartition(partitionNamejtf.getText(), Double.parseDouble(partitionSizejtf.getText()));
+            } else {
+               throw new Exception(GUIUtils.MSG_INVALID_TIME);
+            }
+        }
+        return null;        
     }
 
     /**
@@ -68,7 +88,7 @@ public class AddPartitionDialog extends javax.swing.JDialog {
      * @return true si la cadena de caracteres encaja con la expresión regular
      * para un número decimal positivo
      */
-    public boolean isNumeric(String str) {
+    public static boolean isNumeric(String str) {
         return str != null && (str.matches("[+]?\\d*(\\.\\d+)?") && str.equals("") == false);
     }
 
@@ -194,4 +214,19 @@ public class AddPartitionDialog extends javax.swing.JDialog {
     private javax.swing.JTextField partitionNamejtf;
     private javax.swing.JTextField partitionSizejtf;
     // End of variables declaration//GEN-END:variables
+
+    public JButton getCreatePartitionbtn() {
+        return createPartitionbtn;
+    }
+    
+    public void setValues(Partition partition){
+        partitionNamejtf.setText(partition.getPartitionName());
+        partitionSizejtf.setText(partition.getPartitionSize()+"");
+    }
+
+    public JTextField getPartitionNamejtf() {
+        return partitionNamejtf;
+    }
+    
+    
 }
