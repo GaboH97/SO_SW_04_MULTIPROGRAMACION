@@ -25,7 +25,7 @@ public class AddProcessDialog extends javax.swing.JDialog {
     public AddProcessDialog(java.awt.Frame parent, boolean modal, Controller controller) {
         super(parent, modal);
         partitionComboBoxModel = new DefaultComboBoxModel<>();
-        setUndecorated(true);
+       //setUndecorated(true);
         initComponents();
         //Define los comando de la acción y el escucha de acciones
         createProcessbtn.setActionCommand(Actions.CREATE_PROCESS.name());

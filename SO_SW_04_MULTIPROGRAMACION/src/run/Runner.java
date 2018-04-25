@@ -40,13 +40,6 @@ public class Runner {
         pm.addProcess(pm.createProcess("p2c", 7, 10, pc));
         pm.addProcess(pm.createProcess("p3c", 3, 10, pc));
 
-<<<<<<< HEAD
-        //pm.processProcesses();
-=======
-//        pm.processProcesses();
->>>>>>> 6c7956acdaaca004e9e94ed7f1a2f4f30ce901dc
-
-        System.out.println(pm.toString());
         Controller controller = Controller.getInstance(pm);
     }
 }

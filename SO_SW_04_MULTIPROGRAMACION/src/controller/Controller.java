@@ -74,14 +74,14 @@ public class Controller implements ActionListener {
         }
         return controller;
     }
-    
+
     private Controller() {
         processManager = new ProcessManager();
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
         addPartitionDialog = new AddPartitionDialog(mainWindow, true, this);
     }
-    
+
     private Controller(ProcessManager processManager) {
         this.processManager = processManager;
         mainWindow = new MainWindow(this);
@@ -117,7 +117,7 @@ public class Controller implements ActionListener {
                 createPartition();
                 break;
             case EDIT_PARTITION:
-                
+
                 break;
             case START:
                 start();
@@ -139,7 +139,7 @@ public class Controller implements ActionListener {
                 break;
         }
     }
-    
+
     private void openCreateProcess() throws HeadlessException {
         if (!processManager.getPartitionsList().isEmpty()) {
             addProcessDialog.addPartitions(processManager.getPartitionsList());
@@ -272,7 +272,7 @@ public class Controller implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void setProcessManager(ProcessManager processManager) {
         this.processManager = processManager;
     }
@@ -283,14 +283,14 @@ public class Controller implements ActionListener {
     private void showPartitionsAndProcesses() {
         mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
     }
-    
+
     private void showGeneralReport() {
         mainWindow.showGeneralReport(processManager.getInput_ProcessList(),
                 processManager.getExecutionProcesList(),
                 processManager.getOutput_ProcessList(),
                 processManager.getUnprocessed_ProcessList());
     }
-    
+
     public boolean editPartition(String partitionName) {
         System.out.println("Quiere editar la particion");
         return true;
@@ -304,7 +304,7 @@ public class Controller implements ActionListener {
      */
     public void deletePartition(String partitionName) {
         try {
-            
+
             if (processManager.searchPartition(partitionName).getInputProcesses().isEmpty()) {
                 processManager.getPartitionsList().remove(processManager.searchPartition(partitionName));
                 mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
@@ -314,7 +314,7 @@ public class Controller implements ActionListener {
                         APP_TITLE, JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
-            
+
         }
     }
 
@@ -337,8 +337,7 @@ public class Controller implements ActionListener {
             logic.Process process = processManager.searchProcess(processName, processManager.getInput_ProcessList());
             //Elimina el proceso de la partición y de la lista de entrada
             int indexOfDeleted = processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().indexOf(process);
-            System.out.println(processManager.getInput_ProcessList());
-            mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
+
             if (processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().isEmpty()) {
                 processManager.searchPartition(process.getBelongingPartition().getPartitionName()).setCurrentProcess(null);
             } else if (processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().get(indexOfDeleted + 1) != null
@@ -347,17 +346,18 @@ public class Controller implements ActionListener {
             }
             processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().remove(process);
             processManager.getInput_ProcessList().remove(process);
+            mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
         } catch (Exception ex) {
-            
+
         }
     }
-    
+
     private void showPartitionsReport1() {
         mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
-    
+
     private void showPartitionsReport2() {
         mainWindow.showProcessesPerPartitions2(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
-    
+
 }
