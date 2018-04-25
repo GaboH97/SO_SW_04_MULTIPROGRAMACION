@@ -13,7 +13,7 @@ public class GUIUtils {
     //---------------- GUI TABLES HEADERS ------------------
     public static final String[] ADD_PROCESSES_TABLE_HEADERS = new String[]{"Nombre", "Tiempo", "Tamaño", "Partición"};
     public static final String[] ADD_PARTITIONS_TABLE_HEADERS = new String[]{"Nombre", "Tamaño"};
-    public static final String[] IO_PROCESSES_TABLE_HEADERS = new String[]{"Procesos de Entrada", "Procesos de Salida", "Procesos No Procesados"};
+    public static final String[] IO_PROCESSES_TABLE_HEADERS = new String[]{"Procesos de Entrada","Procesos en Ejecución", "Procesos de Salida", "Procesos No Procesados"};
 
 //public static final String[] PROCESSES_STATES_TABLE_HEADERS = new String[]{"Listo", "En Ejecución", "Bloqueado", "Suspendido Listo", "Suspendido Bloqueado"};
     //public static final String[] PROCESSES_TRANSITIONS_TABLE_HEADERS = new String[]{"Expirados","Despachados","Espera E/S Ejec-Bloq","Term. E/S Bloq-Listo","Sus Listo-Sus.Listo","Rea. Sus.Listo-Listo","Sus. Ejec-Sus-Listo","Sus Bloq-Sus.bloq","Rea. Sus.Bloq-Bloq","Term. E/S Sus.Bloq-Sus.Listo", "Espera E/S deacuerdo a evento"};

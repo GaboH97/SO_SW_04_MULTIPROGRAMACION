@@ -120,8 +120,8 @@ public class Controller implements ActionListener {
             case START:
                 start();
                 break;
-            case SHOW_IO_PROCESSES:
-                showIOProcesses();
+            case SHOW_GENERAL_REPORT:
+                showGeneralReport();
                 break;
             case SHOW_STATES:
                 showStates();
@@ -134,6 +134,12 @@ public class Controller implements ActionListener {
                 break;
             case SHOW_PARTITIONS_AND_PROCESSES:
                 showPartitionsAndProcesses();
+                break;
+            case SHOW_PARTITIONS_REPORT_1:
+                showPartitionsReport1();
+                break;
+            case SHOW_PARTITIONS_REPORT_2:
+                showPartitionsReport2();
                 break;
         }
     }
@@ -224,15 +230,15 @@ public class Controller implements ActionListener {
         } else {
             processManager.processProcesses();
             mainWindow.showOptions(false);
-            showIOProcesses();
+            showPartitionsAndProcesses();
         }
     }
 
     /**
      * Muestra una tabla los procesos de entrada, salida y los no procesados
      */
-    private void showIOProcesses() {
-        mainWindow.showIOProcesses(processManager.getInput_ProcessList(), processManager.getOutput_ProcessList(), processManager.getUnprocessed_ProcessList());
+    private void showProcessesPerPartitions() {
+        mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(),processManager.getPartitionsList());
     }
 
     /**
@@ -295,6 +301,14 @@ public class Controller implements ActionListener {
     private void showPartitionsAndProcesses() {
         mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
     }
+    
+    private void showGeneralReport (){
+        mainWindow.showGeneralReport(processManager.getInput_ProcessList(),
+                                     processManager.getExecutionProcesList(),
+                                     processManager.getOutput_ProcessList(),
+                                     processManager.getUnprocessed_ProcessList());
+    }
+   
 
     public boolean editPartition(String partitionName) {
         System.out.println("Quiere editar la particion");
@@ -339,7 +353,7 @@ public class Controller implements ActionListener {
             logic.Process process = processManager.searchProcess(processName, processManager.getInput_ProcessList());
             Partition partition = process.getBelongingPartition();
             //Elimina el proceso de la partición y de la lista de entrada
-            processManager.searchPartition(partition.getPartitionName()).getProcesses().remove(process);
+            processManager.searchPartition(partition.getPartitionName()).getInputProcesses().remove(process);
             processManager.getInput_ProcessList().remove(processManager.searchProcess(processName,processManager.getInput_ProcessList()));
             System.out.println(processManager.toString());
             mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
@@ -347,6 +361,14 @@ public class Controller implements ActionListener {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    private void showPartitionsReport1() {
+      mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
+    }
+
+    private void showPartitionsReport2() {
+        mainWindow.showProcessesPerPartitions2(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
 
 }

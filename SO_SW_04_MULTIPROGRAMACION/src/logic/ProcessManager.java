@@ -17,11 +17,11 @@ public class ProcessManager {
     //------------------------ Atributos -----------------------------
     public static final double DEFAULT_QUANTUM = 5;
     private ArrayList<Process> input_ProcessList;
-    private ArrayList<Process> ready_ProcessList;
-    private ArrayList<Process> execution_ProcessList;
     private ArrayList<Process> unprocessed_ProcessList;
+    private ArrayList<Process> executionProcesList;
     private ArrayList<Process> output_ProcessList;
     private ArrayList<Partition> partitionsList;
+    
 
     private double quantum;
 
@@ -29,11 +29,10 @@ public class ProcessManager {
     public ProcessManager() {
         this.quantum = DEFAULT_QUANTUM;
         this.input_ProcessList = new ArrayList<>();
-        this.ready_ProcessList = new ArrayList<>();
-        this.execution_ProcessList = new ArrayList<>();
         this.output_ProcessList = new ArrayList<>();
         this.partitionsList = new ArrayList<>();
         this.unprocessed_ProcessList = new ArrayList<>();
+        this.executionProcesList = new ArrayList<>();
     }
 
     //------------------------ Métodos -----------------------------
@@ -57,9 +56,11 @@ public class ProcessManager {
         } catch (Exception e) {
             try {
                 Partition partition = searchPartition(p.getBelongingPartition().getPartitionName());
-                partition.getProcesses().add(p);
+                partition.getInputProcesses().add(p);
+                if (partition.getInputProcesses().size() == 1) {
+                    partition.setCurrentProcess(p);
+                }
                 input_ProcessList.add(p);
-
                 return true;
             } catch (Exception ex) {
                 return false;
@@ -116,17 +117,30 @@ public class ProcessManager {
      * Método que procesa los procesos
      */
     public void processProcesses() {
-        //TODO
-    }
+        do {
+            for (Partition partition : partitionsList) {
+                if (partition.getCurrentProcess() != null) {
+                    try {
+                        if (partition.getCurrentProcess().getProcessSize() <= partition.getPartitionSize()) {
+                            partition.getExecutionList().add(partition.getCurrentProcess());
+                            partition.getCurrentProcess().setExecutionTime(partition.getCurrentProcess().getExecutionTime() - quantum);
+                            this.executionProcesList.add(partition.getCurrentProcess());
+                            if (partition.getCurrentProcess().getExecutionTime() <= 0) {
+                                partition.getOutputList().add(partition.getCurrentProcess());
+                                this.output_ProcessList.add(partition.getCurrentProcess());
+                            }
+                        } else {
+                            partition.getCurrentProcess().setExecutionTime(-1);
+                            this.unprocessed_ProcessList.add(partition.getCurrentProcess());
+                            partition.getUnprocesed().add(partition.getCurrentProcess());
+                        }
+                        partition.setCurrentProcess(partition.getNextNotNull());
+                    } catch (Exception e) {
+                    }
+                }
+            }
 
-    /**
-     *
-     * @param p El proceso a atender
-     * @return El proceso atendido
-     */
-    public Process attendProcess(Process p) {
-        p.setExecutionTime(p.getExecutionTime() - quantum);
-        return p;
+        } while ((output_ProcessList.size() + unprocessed_ProcessList.size()) != input_ProcessList.size());
     }
 
     /**
@@ -176,18 +190,25 @@ public class ProcessManager {
         throw new Exception("No se pudo encontrar la partición: " + name);
     }
 
+    public Object[] getPartitionTableHeaders() {
+        ArrayList<String> partitionsHeaders = new ArrayList<>();
+        for (Partition partition : partitionsList) {
+            partitionsHeaders.add("Part. " + partition.getPartitionName());
+        }
+        
+        
+        return partitionsHeaders.toArray();
+    }
+
     //---------------- Getters & Setters -----------------------
     public ArrayList<Process> getInput_ProcessList() {
         return input_ProcessList;
     }
 
-    public ArrayList<Process> getReady_ProcessList() {
-        return ready_ProcessList;
+    public ArrayList<Process> getExecutionProcesList() {
+        return executionProcesList;
     }
-
-    public ArrayList<Process> getExecution_ProcessList() {
-        return execution_ProcessList;
-    }
+    
 
     public ArrayList<Process> getOutput_ProcessList() {
         return output_ProcessList;
@@ -208,9 +229,9 @@ public class ProcessManager {
     @Override
     public String toString() {
         String todo = "ProcessManager{\n" + "\n input_ProcessList=" + input_ProcessList
-                + "\n ready_ProcessList=" + ready_ProcessList
-                + "\n execution_ProcessList=" + execution_ProcessList
                 + "\n output_ProcessList=" + output_ProcessList
+                + "\n unprocessed_ProcessList=" + unprocessed_ProcessList
+                + "\n execution_ProcessList=" + executionProcesList
                 + "\n partitions =\n";
         for (Partition partition : partitionsList) {
             todo += partition.customToString();
