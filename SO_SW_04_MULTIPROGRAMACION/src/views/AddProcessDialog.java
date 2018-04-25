@@ -2,6 +2,8 @@ package views;
 
 import controller.Actions;
 import controller.Controller;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -116,6 +118,13 @@ public class AddProcessDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Tiempo de Ejecución");
 
+        executionTimejtf.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                if (executionTimejtf.getText().length() >= 6 ) // limit textfield to 3 characters
+                e.consume();
+            }
+        });
+
         createProcessbtn.setText("Crear");
 
         cancelbtn.setText("Cancelar");
@@ -132,6 +141,13 @@ public class AddProcessDialog extends javax.swing.JDialog {
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Tamaño");
+
+        processSizejtf.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                if (processSizejtf.getText().length() >= 6 ) // limit textfield to 3 characters
+                e.consume();
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

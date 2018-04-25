@@ -1,0 +1,9 @@
+[]	validar lo de los nombres desde la creacion antes de darle send cuando le de enter cree
+[X]	lo de los mil numeros no debe funkar
+[X]	limitarlo solo a numeros
+[X]	no se pueda borrar una particion si tiene procesos y que salga un mensaje que diga que borre 	tales procesos para poder borrar la particion o que los edite para que pertenezcan a otra 	particion
+[]	debe estaar re full lo de editar y eliminar en todos los cosos
+
+[X]	ah falta otra cosa vea que cuando uno intenta crear una particion y proceso y un tiempo o 		tamaño no es valido sale el mensaje tiempo no valido, y luego sale hay campos vacios, eso no 	deberia pasar solo deberia pasar una de esas 2 excepciones
+
+[X]	ah falta otra validacion que a la hora de crear un proceso si no se tiene ninguna particion 		creada salga un letrero que diga primero cree particiones para poder crear procesos

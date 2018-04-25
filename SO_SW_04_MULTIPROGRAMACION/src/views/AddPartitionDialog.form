@@ -117,6 +117,10 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="partitionSizejtf">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTextField()"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="partitionSizejtf.addKeyListener(new KeyAdapter() {&#xa;    public void keyTyped(KeyEvent e) { &#xa;        if (partitionSizejtf.getText().length() &gt;= 6 ) // limit textfield to 3 characters&#xa;            e.consume(); &#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator1">
     </Component>

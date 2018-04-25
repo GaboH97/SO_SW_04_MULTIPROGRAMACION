@@ -42,7 +42,7 @@ public class Runner {
         pm.addProcess(pm.createProcess("p2c", 7, 10, pc));
         pm.addProcess(pm.createProcess("p3c", 3, 10, pc));
 
-        pm.processProcesses();
+        //pm.processProcesses();
 
         System.out.println(pm.toString());
         Controller controller = Controller.getInstance(pm);

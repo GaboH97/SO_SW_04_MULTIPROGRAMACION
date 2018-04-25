@@ -123,6 +123,10 @@
     <Component class="javax.swing.JTextField" name="processNamejtf">
     </Component>
     <Component class="javax.swing.JTextField" name="executionTimejtf">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTextField()"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="executionTimejtf.addKeyListener(new KeyAdapter() {&#xa;    public void keyTyped(KeyEvent e) { &#xa;        if (executionTimejtf.getText().length() &gt;= 6 ) // limit textfield to 3 characters&#xa;            e.consume(); &#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="createProcessbtn">
       <Properties>
@@ -160,6 +164,10 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="processSizejtf">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTextField()"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="processSizejtf.addKeyListener(new KeyAdapter() {&#xa;    public void keyTyped(KeyEvent e) { &#xa;        if (processSizejtf.getText().length() &gt;= 6 ) // limit textfield to 3 characters&#xa;            e.consume(); &#xa;    }&#xa;});"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

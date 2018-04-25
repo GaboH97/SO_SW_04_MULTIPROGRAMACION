@@ -1,7 +1,10 @@
 package controller;
 
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import logic.Partition;
 import logic.ProcessManager;
@@ -71,14 +74,14 @@ public class Controller implements ActionListener {
         }
         return controller;
     }
-
+    
     private Controller() {
         processManager = new ProcessManager();
         mainWindow = new MainWindow(this);
         addProcessDialog = new AddProcessDialog(mainWindow, true, this);
         addPartitionDialog = new AddPartitionDialog(mainWindow, true, this);
     }
-
+    
     private Controller(ProcessManager processManager) {
         this.processManager = processManager;
         mainWindow = new MainWindow(this);
@@ -102,8 +105,7 @@ public class Controller implements ActionListener {
         //del enumerado Actions
         switch (Actions.valueOf(e.getActionCommand())) {
             case OPEN_CREATE_PROCESS:
-                addProcessDialog.addPartitions(processManager.getPartitionsList());
-                addProcessDialog.setVisible(true);
+                openCreateProcess();
                 break;
             case CREATE_PROCESS:
                 createProcess();
@@ -115,19 +117,13 @@ public class Controller implements ActionListener {
                 createPartition();
                 break;
             case EDIT_PARTITION:
-
+                
                 break;
             case START:
                 start();
                 break;
             case SHOW_GENERAL_REPORT:
                 showGeneralReport();
-                break;
-            case SHOW_STATES:
-                showStates();
-                break;
-            case SHOW_TRANSITIONS:
-                showTransitions();
                 break;
             case OPEN_DEFINE_QUANTUM:
                 openDefineQuantum();
@@ -141,6 +137,15 @@ public class Controller implements ActionListener {
             case SHOW_PARTITIONS_REPORT_2:
                 showPartitionsReport2();
                 break;
+        }
+    }
+    
+    private void openCreateProcess() throws HeadlessException {
+        if (!processManager.getPartitionsList().isEmpty()) {
+            addProcessDialog.addPartitions(processManager.getPartitionsList());
+            addProcessDialog.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(mainWindow, GUIUtils.MSG_NO_PARTITIONS, APP_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -181,27 +186,35 @@ public class Controller implements ActionListener {
     private void createPartition() {
         //Crea una nuevo Proceso, si no es nulo, significa que ha sido creado
         //Exitosamente, es decir
-        Partition partition = addPartitionDialog.createPartition();
-        if (partition != null) {
-            //Agrega el proceso en la lógica y si ha sido agregado correctamente,
-            //Lo agrega a la GUI y cierra el diálogo de agregar proceso
-            if (processManager.addPartition(partition)) {
-                mainWindow.addPartition(partition);
-                addPartitionDialog.close();
+        Partition partition;
+        try {
+            partition = addPartitionDialog.createPartition();
+            if (partition != null) {
+                //Agrega el proceso en la lógica y si ha sido agregado correctamente,
+                //Lo agrega a la GUI y cierra el diálogo de agregar proceso
+                if (processManager.addPartition(partition)) {
+                    mainWindow.addPartition(partition);
+                    addPartitionDialog.close();
+                } else {
+                    //Muestra un mensaje de error indicando que el proceso
+                    //Ya existe en la lógica
+                    JOptionPane.showMessageDialog(addPartitionDialog,
+                            GUIUtils.MSG_PARTITION_ALREADY_EXISTS,
+                            APP_TITLE,
+                            JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                //Muestra un mensaje de error indicando que el proceso
-                //Ya existe en la lógica
+                //Muestra un mensaje de error indicando que en el diálogo para agregar
+                //Procesos hay campos vacíos
                 JOptionPane.showMessageDialog(addPartitionDialog,
-                        GUIUtils.MSG_PROCESS_ALREADY_EXISTS,
+                        GUIUtils.MSG_EMPTY_FIELDS,
                         APP_TITLE,
                         JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            //Muestra un mensaje de error indicando que en el diálogo para agregar
-            //Procesos hay campos vacíos
-            JOptionPane.showMessageDialog(addPartitionDialog,
-                    GUIUtils.MSG_EMPTY_FIELDS,
-                    APP_TITLE,
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(mainWindow,
+                    GUIUtils.MSG_INVALID_TIME,
+                    GUIUtils.APP_TITLE,
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -238,38 +251,7 @@ public class Controller implements ActionListener {
      * Muestra una tabla los procesos de entrada, salida y los no procesados
      */
     private void showProcessesPerPartitions() {
-        mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(),processManager.getPartitionsList());
-    }
-
-    /**
-     * Muestra una tabla con los estados de los procesos (Listos, En Ejecución y
-     * Bloqueados)
-     */
-    private void showStates() {
-        /*mainWindow.showStates(processManager.getReady_ProcessList(),
-                processManager.getExecution_ProcessList(),
-                processManager.getLocked_ProcessList(),
-                processManager.getSuspendedReady_ProcessList(),
-                processManager.getLockedSuspended_ProcessList());
-         */
-    }
-
-    /**
-     * Muestra una tabla con las transiciones de los procesos (Expirados,
-     * Despiertos)
-     */
-    private void showTransitions() {
-        /* mainWindow.showTransitions(processManager.getTrans_Expired_ExecutionToReady(),
-                processManager.getTrans_Dispatch_ReadyToExecution(),
-                processManager.getTrans_WaitES_ExecutionToLocked(),
-                processManager.getTrans_ESFinished_LockedToReady(),
-                processManager.getTrans_Suspend_ReadyToSusready(),
-                processManager.getTrans_Reanudation_SusreadyToReady(),
-                processManager.getTrans_Suspend_ExcecutionToSusready(),
-                processManager.getTrans_Suspend_LockedToSuspendedlocked(),
-                processManager.getTrans_Reanudation_SuspendedlockedToLocked(),
-                processManager.getTrans_ESFinished_SuslockedToSusready(),
-                processManager.getTrans_wait_accordingToEvent());*/
+        mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
 
     /**
@@ -290,7 +272,7 @@ public class Controller implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    
     public void setProcessManager(ProcessManager processManager) {
         this.processManager = processManager;
     }
@@ -302,14 +284,13 @@ public class Controller implements ActionListener {
         mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
     }
     
-    private void showGeneralReport (){
+    private void showGeneralReport() {
         mainWindow.showGeneralReport(processManager.getInput_ProcessList(),
-                                     processManager.getExecutionProcesList(),
-                                     processManager.getOutput_ProcessList(),
-                                     processManager.getUnprocessed_ProcessList());
+                processManager.getExecutionProcesList(),
+                processManager.getOutput_ProcessList(),
+                processManager.getUnprocessed_ProcessList());
     }
-   
-
+    
     public boolean editPartition(String partitionName) {
         System.out.println("Quiere editar la particion");
         return true;
@@ -320,15 +301,20 @@ public class Controller implements ActionListener {
      * BORRA UNA PARTICIÓN, TAMBIÉN SE BORRAN SUS PROCESOS
      *
      * @param partitionName La partición a borrar
-     * @return true si la partición fue borrada, de lo contrario false
      */
-    public boolean deletePartition(String partitionName) {
+    public void deletePartition(String partitionName) {
         try {
-            processManager.getPartitionsList().remove(processManager.searchPartition(partitionName));
-            mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
-            return true;
+            
+            if (processManager.searchPartition(partitionName).getInputProcesses().isEmpty()) {
+                processManager.getPartitionsList().remove(processManager.searchPartition(partitionName));
+                mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
+            } else {
+                JOptionPane.showMessageDialog(mainWindow,
+                        GUIUtils.MSG_CANNOT_DELETE_PARTITION,
+                        APP_TITLE, JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception ex) {
-            return false;
+            
         }
     }
 
@@ -344,31 +330,34 @@ public class Controller implements ActionListener {
     /**
      *
      * @param processName Nombre del proceso a borrar
-     * @return true si el proceso fue borrado, de lo contrario false
      */
-    public boolean deleteProcess(String processName) {
+    public void deleteProcess(String processName) {
         try {
-            System.out.println("entra aqui");
             //Obtiene el proceso y la partición a la que pertenece
             logic.Process process = processManager.searchProcess(processName, processManager.getInput_ProcessList());
-            Partition partition = process.getBelongingPartition();
             //Elimina el proceso de la partición y de la lista de entrada
-            processManager.searchPartition(partition.getPartitionName()).getInputProcesses().remove(process);
-            processManager.getInput_ProcessList().remove(processManager.searchProcess(processName,processManager.getInput_ProcessList()));
-            System.out.println(processManager.toString());
+            int indexOfDeleted = processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().indexOf(process);
+            System.out.println(processManager.getInput_ProcessList());
             mainWindow.showPartitionsandProcesses(processManager.getPartitionsList(), processManager.getInput_ProcessList());
-            return true;
+            if (processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().isEmpty()) {
+                processManager.searchPartition(process.getBelongingPartition().getPartitionName()).setCurrentProcess(null);
+            } else if (processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().get(indexOfDeleted + 1) != null
+                    && processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().get(0) != null) {
+                processManager.searchPartition(process.getBelongingPartition().getPartitionName()).setCurrentProcess(processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().get(indexOfDeleted + 1));
+            }
+            processManager.searchPartition(process.getBelongingPartition().getPartitionName()).getInputProcesses().remove(process);
+            processManager.getInput_ProcessList().remove(process);
         } catch (Exception ex) {
-            return false;
+            
         }
     }
-
+    
     private void showPartitionsReport1() {
-      mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
+        mainWindow.showProcessesPerPartitions1(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
-
+    
     private void showPartitionsReport2() {
         mainWindow.showProcessesPerPartitions2(processManager.getPartitionTableHeaders(), processManager.getPartitionsList());
     }
-
+    
 }

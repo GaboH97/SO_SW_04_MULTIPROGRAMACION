@@ -100,7 +100,6 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
         this.setTitle(APP_TITLE);
         //this.setUndecorated(true);
         initComponents();
-
         setActions(controller);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         showOptions(true);
@@ -717,6 +716,7 @@ public class MainWindow extends javax.swing.JFrame implements ActionListener {
             String value = processesTable.getModel().getValueAt(row, 0).toString();
             controller.deleteProcess(value);
         }
+        System.out.println("salio");
     }
 
     public void showProcessesPerPartitions1(Object[] partitionTableHeaders, ArrayList<Partition> partitionsList) {

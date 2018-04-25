@@ -7,6 +7,8 @@ package views;
 
 import controller.Actions;
 import controller.Controller;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import logic.Partition;
 import logic.ProcessManager;
@@ -43,7 +45,7 @@ public class AddPartitionDialog extends javax.swing.JDialog {
      *
      * @return Una instancia de la clase Proceso
      */
-    public Partition createPartition() {
+    public Partition createPartition() throws Exception {
         Partition partition = null;
         //Verifica que los campos no estén vacíos
         if (!partitionNamejtf.getText().isEmpty() && !partitionSizejtf.getText().isEmpty()) {
@@ -53,10 +55,7 @@ public class AddPartitionDialog extends javax.swing.JDialog {
                 //una nueva instancia de la clase Proceso
                 partition = ProcessManager.createPartition(partitionNamejtf.getText(), Double.parseDouble(partitionSizejtf.getText()));
             } else {
-                JOptionPane.showMessageDialog(this,
-                        GUIUtils.MSG_INVALID_TIME,
-                        GUIUtils.APP_TITLE,
-                        JOptionPane.ERROR_MESSAGE);
+               throw new Exception(GUIUtils.MSG_INVALID_TIME);
             }
         }
         return partition;
@@ -108,6 +107,13 @@ public class AddPartitionDialog extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Agregar Partición");
+
+        partitionSizejtf.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e) {
+                if (partitionSizejtf.getText().length() >= 6 ) // limit textfield to 3 characters
+                e.consume();
+            }
+        });
 
         jLabel2.setText("Nombre de la Partición");
 
